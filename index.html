@@ -40,7 +40,7 @@
             margin-bottom: 1.5rem;
             text-align: center;
         }
-        .selection-panel, .quiz-panel, .results-panel {
+        .panel {
             display: flex;
             flex-direction: column;
             gap: 1rem;
@@ -89,7 +89,7 @@
             font-weight: normal;
             cursor: pointer;
         }
-        .quiz-card {
+        .quiz-card, .study-card {
             background: #f9fafb;
             border-radius: 10px;
             padding: 1.5rem;
@@ -168,14 +168,32 @@
             border-radius: 8px;
             margin-bottom: 1rem;
         }
+        .study-answer {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-top: 1rem;
+            display: none;
+        }
+        .study-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        .study-sort {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
     </style>
 </head>
 <body>
     <div class="container" id="app">
         <h1>Rad Tech Practice Program</h1>
 
-        <!-- Selection Panel (initially visible) -->
-        <div id="selection-panel" class="selection-panel">
+        <!-- Selection Panel -->
+        <div id="selection-panel" class="panel">
             <div class="book-select">
                 <label for="bookSelect">Select Book:</label>
                 <select id="bookSelect">
@@ -186,12 +204,13 @@
                 <label>Select Chapter(s):</label>
                 <div id="chapterCheckboxes" class="chapter-checkboxes"></div>
             </div>
-            <button id="startBtn" disabled>Start Test</button>
+            <button id="startTestBtn" disabled>Start Test</button>
+            <button id="startStudyBtn" disabled>Study Mode</button>
             <p id="loadingStatus" style="text-align:center; color:gray;">Loading books...</p>
         </div>
 
-        <!-- Quiz Panel (hidden initially) -->
-        <div id="quiz-panel" class="quiz-panel" style="display:none;">
+        <!-- Quiz Panel -->
+        <div id="quiz-panel" class="panel" style="display:none;">
             <div id="quizCard" class="quiz-card">
                 <div id="promptDisplay" class="prompt"></div>
                 <div id="answerArea" class="answer-area"></div>
@@ -204,8 +223,33 @@
             <div id="scoreDisplay" class="score"></div>
         </div>
 
-        <!-- Results Panel (hidden initially) -->
-        <div id="results-panel" class="results-panel" style="display:none;">
+        <!-- Study Panel -->
+        <div id="study-panel" class="panel" style="display:none;">
+            <div id="studyCard" class="study-card">
+                <div id="studyPrompt" class="prompt"></div>
+                <div id="studyAnswer" class="study-answer"></div>
+                <div class="action-buttons">
+                    <button id="revealBtn">Reveal Answer</button>
+                </div>
+            </div>
+            <div class="study-nav">
+                <button id="prevBtn">← Previous</button>
+                <span id="studyCounter">0 / 0</span>
+                <button id="nextStudyBtn">Next →</button>
+            </div>
+            <div class="study-sort">
+                <label for="sortSelect">Sort by:</label>
+                <select id="sortSelect">
+                    <option value="alphabetical" selected>Alphabetical</option>
+                    <option value="random">Random</option>
+                    <option value="original">Original Order</option>
+                </select>
+                <button id="exitStudyBtn" style="margin-left:auto;">Back to Selection</button>
+            </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div id="results-panel" class="panel" style="display:none;">
             <h2>Test Complete!</h2>
             <p id="finalScore"></p>
             <button id="restartBtn">Back to Book Selection</button>
@@ -215,28 +259,31 @@
     <script>
         (function() {
             // ---------- Configuration ----------
-            // Base URL for raw GitHub content. Change this to your repo.
             const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/RadTech2028/RT2026-practice-terms/main/";
-            // Path to books.json (relative to raw base)
             const BOOKS_JSON_PATH = "data/books.json";
 
             // ---------- State ----------
             let books = [];
             let currentBook = null;
             let selectedChapters = [];       // array of chapter file paths
-            let allTerms = [];
+            let allTerms = [];              // terms for the current mode (test/study)
             let currentTermIndex = 0;
             let score = { correct: 0, total: 0 };
             let quizActive = false;
+            let studyActive = false;
+            let studyTerms = [];            // sorted terms for study mode
+            let originalTerms = [];         // as loaded before sorting
 
             // DOM elements
             const selectionPanel = document.getElementById('selection-panel');
             const quizPanel = document.getElementById('quiz-panel');
+            const studyPanel = document.getElementById('study-panel');
             const resultsPanel = document.getElementById('results-panel');
             const bookSelect = document.getElementById('bookSelect');
             const chapterListContainer = document.getElementById('chapterListContainer');
             const chapterCheckboxes = document.getElementById('chapterCheckboxes');
-            const startBtn = document.getElementById('startBtn');
+            const startTestBtn = document.getElementById('startTestBtn');
+            const startStudyBtn = document.getElementById('startStudyBtn');
             const loadingStatus = document.getElementById('loadingStatus');
             const promptDisplay = document.getElementById('promptDisplay');
             const answerArea = document.getElementById('answerArea');
@@ -246,6 +293,15 @@
             const scoreDisplay = document.getElementById('scoreDisplay');
             const finalScore = document.getElementById('finalScore');
             const restartBtn = document.getElementById('restartBtn');
+            // Study elements
+            const studyPrompt = document.getElementById('studyPrompt');
+            const studyAnswer = document.getElementById('studyAnswer');
+            const revealBtn = document.getElementById('revealBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextStudyBtn = document.getElementById('nextStudyBtn');
+            const studyCounter = document.getElementById('studyCounter');
+            const sortSelect = document.getElementById('sortSelect');
+            const exitStudyBtn = document.getElementById('exitStudyBtn');
 
             // ---------- Initialization ----------
             async function init() {
@@ -278,14 +334,15 @@
                 const idx = this.value;
                 if (idx === '') {
                     chapterListContainer.style.display = 'none';
-                    startBtn.disabled = true;
+                    startTestBtn.disabled = true;
+                    startStudyBtn.disabled = true;
                     currentBook = null;
                     return;
                 }
                 currentBook = books[parseInt(idx)];
                 renderChapterCheckboxes(currentBook.chapters);
                 chapterListContainer.style.display = 'block';
-                updateStartButton();
+                updateButtons();
             });
 
             function renderChapterCheckboxes(chapters) {
@@ -294,51 +351,59 @@
                     const label = document.createElement('label');
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
-                    checkbox.value = chapter.file;   // store file path
-                    checkbox.addEventListener('change', updateStartButton);
+                    checkbox.value = chapter.file;
+                    checkbox.addEventListener('change', updateButtons);
                     label.appendChild(checkbox);
                     label.appendChild(document.createTextNode(chapter.name));
                     chapterCheckboxes.appendChild(label);
                 });
             }
 
-            function updateStartButton() {
+            function updateButtons() {
                 const checked = chapterCheckboxes.querySelectorAll('input[type="checkbox"]:checked');
-                startBtn.disabled = checked.length === 0;
+                const hasSelection = checked.length > 0;
+                startTestBtn.disabled = !hasSelection;
+                startStudyBtn.disabled = !hasSelection;
             }
 
-            // ---------- Start Test ----------
-            startBtn.addEventListener('click', async function() {
+            // ---------- Load Terms for Selected Chapters ----------
+            async function loadSelectedTerms() {
                 const checked = chapterCheckboxes.querySelectorAll('input[type="checkbox"]:checked');
                 selectedChapters = Array.from(checked).map(cb => cb.value);
-                if (selectedChapters.length === 0) return;
+                if (selectedChapters.length === 0) return [];
 
-                // Load terms from selected chapters
-                allTerms = [];
+                let terms = [];
                 for (const filePath of selectedChapters) {
                     try {
                         const url = GITHUB_RAW_BASE + filePath;
                         const resp = await fetch(url);
                         if (!resp.ok) throw new Error('Failed to fetch ' + filePath);
-                        const terms = await resp.json();
-                        allTerms = allTerms.concat(terms);
+                        const chapterTerms = await resp.json();
+                        terms = terms.concat(chapterTerms);
                     } catch (error) {
                         console.error('Error loading chapter:', filePath, error);
-                        alert('Error loading chapter: ' + filePath + '\nPlease check the file path in books.json and ensure the file exists.');
-                        return; // stop loading further chapters
+                        alert('Error loading chapter: ' + filePath);
+                        return null;
                     }
                 }
-                if (allTerms.length === 0) {
+                return terms;
+            }
+
+            // ---------- Start Test Mode ----------
+            startTestBtn.addEventListener('click', async function() {
+                const terms = await loadSelectedTerms();
+                if (!terms || terms.length === 0) {
                     alert('No terms found in selected chapters.');
                     return;
                 }
-                // Shuffle terms
-                allTerms = shuffleArray(allTerms);
+                allTerms = shuffleArray([...terms]);
                 currentTermIndex = 0;
                 score = { correct: 0, total: 0 };
                 quizActive = true;
+                studyActive = false;
                 selectionPanel.style.display = 'none';
                 quizPanel.style.display = 'block';
+                studyPanel.style.display = 'none';
                 resultsPanel.style.display = 'none';
                 showCurrentTerm();
             });
@@ -362,7 +427,6 @@
                 submitBtn.style.display = 'inline-block';
                 nextBtn.style.display = 'none';
 
-                // Prompt
                 if (term.promptImage) {
                     const img = document.createElement('img');
                     img.src = term.promptImage;
@@ -372,7 +436,6 @@
                     promptDisplay.textContent = term.promptText || 'Define the following:';
                 }
 
-                // Pre‑text
                 if (term.preText) {
                     const pre = document.createElement('span');
                     pre.className = 'pre-text';
@@ -380,7 +443,6 @@
                     answerArea.appendChild(pre);
                 }
 
-                // Input fields for each word in answerParts
                 const inputs = [];
                 term.answerParts.forEach((word, idx) => {
                     const input = document.createElement('input');
@@ -390,14 +452,12 @@
                     input.autocomplete = 'off';
                     input.autocapitalize = 'off';
                     input.spellcheck = false;
-                    // Adjust width based on word length (min 80px)
                     input.style.width = Math.max(80, word.length * 12 + 20) + 'px';
                     input.addEventListener('keydown', handleInputKeydown);
                     answerArea.appendChild(input);
                     inputs.push(input);
                 });
 
-                // Post‑text
                 if (term.postText) {
                     const post = document.createElement('span');
                     post.className = 'post-text';
@@ -405,10 +465,7 @@
                     answerArea.appendChild(post);
                 }
 
-                // Focus first input
                 if (inputs.length > 0) inputs[0].focus();
-
-                // Update score display
                 scoreDisplay.textContent = `Score: ${score.correct} / ${score.total}`;
             }
 
@@ -435,7 +492,6 @@
                 const inputs = Array.from(answerArea.querySelectorAll('.word-input'));
                 const userWords = inputs.map(inp => inp.value.trim());
 
-                // Build user's answer with coloring
                 let userResultHTML = '<span class="pre-text">' + (term.preText || '') + '</span>';
                 for (let i = 0; i < term.answerParts.length; i++) {
                     const correctWord = term.answerParts[i];
@@ -446,17 +502,14 @@
                         const correctChar = correctWord[j];
                         const userChar = userWord[j];
                         if (j < correctWord.length && j < userWord.length) {
-                            // Both exist: compare
                             if (correctChar.toLowerCase() === userChar.toLowerCase()) {
                                 userResultHTML += `<span class="letter-correct">${escapeHTML(userChar)}</span>`;
                             } else {
                                 userResultHTML += `<span class="letter-wrong">${escapeHTML(userChar)}</span>`;
                             }
                         } else if (j < correctWord.length && j >= userWord.length) {
-                            // Missing letter
                             userResultHTML += `<span class="letter-missing">_</span>`;
                         } else {
-                            // Extra letter (userWord longer than correct)
                             userResultHTML += `<span class="letter-wrong">${escapeHTML(userChar)}</span>`;
                         }
                     }
@@ -467,16 +520,13 @@
                 }
                 userResultHTML += '<span class="post-text">' + (term.postText || '') + '</span>';
 
-                // Build full correct answer text
                 const correctFullText = (term.preText || '') + term.answerParts.join(' ') + (term.postText || '');
 
-                // Check if entire answer is correct
                 const isCorrect = term.answerParts.every((word, i) => word.toLowerCase() === (userWords[i] || '').toLowerCase());
                 score.total++;
                 if (isCorrect) score.correct++;
                 scoreDisplay.textContent = `Score: ${score.correct} / ${score.total}`;
 
-                // Display result with both user and correct answer
                 resultDisplay.innerHTML = `
                     <div class="answer-comparison">
                         <p><strong>Your answer:</strong> ${userResultHTML}</p>
@@ -485,7 +535,6 @@
                 `;
                 resultDisplay.style.display = 'block';
 
-                // Hide inputs and submit button
                 inputs.forEach(inp => inp.style.display = 'none');
                 submitBtn.style.display = 'none';
                 nextBtn.style.display = 'inline-block';
@@ -504,7 +553,6 @@
                 if (currentTermIndex < allTerms.length) {
                     showCurrentTerm();
                 } else {
-                    // End of quiz
                     quizActive = false;
                     quizPanel.style.display = 'none';
                     resultsPanel.style.display = 'block';
@@ -518,12 +566,101 @@
                 selectionPanel.style.display = 'block';
                 bookSelect.value = '';
                 chapterListContainer.style.display = 'none';
-                startBtn.disabled = true;
+                startTestBtn.disabled = true;
+                startStudyBtn.disabled = true;
                 currentBook = null;
                 selectedChapters = [];
                 allTerms = [];
                 currentTermIndex = 0;
                 score = { correct: 0, total: 0 };
+            });
+
+            // ---------- Study Mode ----------
+            startStudyBtn.addEventListener('click', async function() {
+                const terms = await loadSelectedTerms();
+                if (!terms || terms.length === 0) {
+                    alert('No terms found in selected chapters.');
+                    return;
+                }
+                originalTerms = [...terms];
+                studyTerms = sortTerms(originalTerms, sortSelect.value);
+                studyActive = true;
+                quizActive = false;
+                currentTermIndex = 0;
+                selectionPanel.style.display = 'none';
+                quizPanel.style.display = 'none';
+                studyPanel.style.display = 'block';
+                showStudyTerm();
+            });
+
+            function sortTerms(terms, sortType) {
+                let sorted = [...terms];
+                if (sortType === 'alphabetical') {
+                    sorted.sort((a, b) => {
+                        const promptA = (a.promptText || '').toLowerCase();
+                        const promptB = (b.promptText || '').toLowerCase();
+                        return promptA.localeCompare(promptB);
+                    });
+                } else if (sortType === 'random') {
+                    sorted = shuffleArray(sorted);
+                } // 'original' keeps as loaded
+                return sorted;
+            }
+
+            sortSelect.addEventListener('change', function() {
+                if (studyActive) {
+                    studyTerms = sortTerms(originalTerms, this.value);
+                    currentTermIndex = 0;
+                    showStudyTerm();
+                }
+            });
+
+            function showStudyTerm() {
+                if (!studyActive) return;
+                const term = studyTerms[currentTermIndex];
+                studyPrompt.innerHTML = '';
+                if (term.promptImage) {
+                    const img = document.createElement('img');
+                    img.src = term.promptImage;
+                    img.alt = 'Prompt image';
+                    studyPrompt.appendChild(img);
+                } else {
+                    studyPrompt.textContent = term.promptText || 'Define the following:';
+                }
+                studyAnswer.style.display = 'none';
+                studyAnswer.textContent = (term.preText || '') + term.answerParts.join(' ') + (term.postText || '');
+                studyCounter.textContent = `${currentTermIndex + 1} / ${studyTerms.length}`;
+                revealBtn.textContent = 'Reveal Answer';
+            }
+
+            revealBtn.addEventListener('click', function() {
+                studyAnswer.style.display = 'block';
+                revealBtn.textContent = 'Hide Answer';
+                revealBtn.onclick = function() {
+                    studyAnswer.style.display = 'none';
+                    revealBtn.textContent = 'Reveal Answer';
+                };
+            });
+
+            prevBtn.addEventListener('click', function() {
+                if (currentTermIndex > 0) {
+                    currentTermIndex--;
+                    showStudyTerm();
+                }
+            });
+
+            nextStudyBtn.addEventListener('click', function() {
+                if (currentTermIndex < studyTerms.length - 1) {
+                    currentTermIndex++;
+                    showStudyTerm();
+                }
+            });
+
+            exitStudyBtn.addEventListener('click', function() {
+                studyActive = false;
+                studyPanel.style.display = 'none';
+                selectionPanel.style.display = 'block';
+                // Keep selection state
             });
 
             // Start the app
