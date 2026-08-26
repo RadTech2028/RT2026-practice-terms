@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rad Tech Practice Program</title>
+    <style>
+        :root {
+            --bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text: #2d3748;
+            --accent: #3182ce;
+            --green: #38a169;
+            --red: #e53e3e;
+            --gray: #a0aec0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        h1 {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .selection-panel, .quiz-panel, .results-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .book-select, .chapter-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        label {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        select, button {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        button:hover {
+            background: #2b6cb0;
+        }
+        button:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+        }
+        .chapter-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+        .chapter-checkboxes label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        .quiz-card {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .prompt {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            white-space: pre-wrap;
+        }
+        .prompt img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .answer-area {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .pre-text, .post-text {
+            font-size: 1.1rem;
+            white-space: pre-wrap;
+        }
+        .word-input {
+            display: inline-block;
+            padding: 0.4rem 0.6rem;
+            font-size: 1.1rem;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            width: auto;
+            min-width: 80px;
+            transition: border-color 0.2s;
+        }
+        .word-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(49,130,206,0.2);
+        }
+        .result-letters {
+            font-size: 1.2rem;
+            font-family: monospace;
+            letter-spacing: 2px;
+            word-break: break-word;
+        }
+        .letter-correct { color: var(--green); }
+        .letter-wrong { color: var(--red); }
+        .letter-missing { color: var(--red); text-decoration: underline; }
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+        .score {
+            font-weight: 600;
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <h1>Rad Tech Practice Program</h1>
+
+        <!-- Selection Panel (initially visible) -->
+        <div id="selection-panel" class="selection-panel">
+            <div class="book-select">
+                <label for="bookSelect">Select Book:</label>
+                <select id="bookSelect">
+                    <option value="">-- Choose a book --</option>
+                </select>
+            </div>
+            <div id="chapterListContainer" class="chapter-list" style="display:none;">
+                <label>Select Chapter(s):</label>
+                <div id="chapterCheckboxes" class="chapter-checkboxes"></div>
+            </div>
+            <button id="startBtn" disabled>Start Test</button>
+            <p id="loadingStatus" style="text-align:center; color:gray;">Loading books...</p>
+        </div>
+
+        <!-- Quiz Panel (hidden initially) -->
+        <div id="quiz-panel" class="quiz-panel" style="display:none;">
+            <div id="quizCard" class="quiz-card">
+                <div id="promptDisplay" class="prompt"></div>
+                <div id="answerArea" class="answer-area"></div>
+                <div id="resultDisplay" style="display:none;"></div>
+                <div class="action-buttons">
+                    <button id="submitBtn">Submit (Enter)</button>
+                    <button id="nextBtn" style="display:none;">Next</button>
+                </div>
+            </div>
+            <div id="scoreDisplay" class="score"></div>
+        </div>
+
+        <!-- Results Panel (hidden initially) -->
+        <div id="results-panel" class="results-panel" style="display:none;">
+            <h2>Test Complete!</h2>
+            <p id="finalScore"></p>
+            <button id="restartBtn">Back to Book Selection</button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- Configuration ----------
+            // Base URL for raw GitHub content. Change this to your repo.
+            const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/USERNAME/REPOSITORY/main/";
+            // Path to books.json (relative to raw base)
+            const BOOKS_JSON_PATH = "data/books.json";
+
+            // Fallback sample data if fetch fails (for offline testing)
+            const FALLBACK_BOOKS = [
+                {
+                    name: "Merrils Atlas",
+                    chapters: [
+                        {
+                            name: "Upper Extremity (Sample)",
+                            file: "data/MerrilsAtlas/UpperExtremity.json"
+                        }
+                    ]
+                },
+                {
+                    name: "Bushong",
+                    chapters: [
+                        {
+                            name: "Radiographic Positioning (Sample)",
+                            file: "data/Bushong/RadiographicPositioning.json"
+                        }
+                    ]
+                }
+            ];
+
+            const FALLBACK_CHAPTERS = {
+                "data/MerrilsAtlas/UpperExtremity.json": [
+                    {
+                        promptText: "MCP",
+                        answerParts: ["metacarpophalangeal"],
+                        postText: " joint"
+                    },
+                    {
+                        promptText: "PIP",
+                        answerParts: ["proximal", "interphalangeal"],
+                        postText: " joint"
+                    },
+                    {
+                        promptText: "DIP",
+                        answerParts: ["distal", "interphalangeal"],
+                        postText: " joint"
+                    },
+                    {
+                        promptText: "The bones of the wrist are called the:",
+                        answerParts: ["carpals"]
+                    },
+                    {
+                        promptText: "The bones of the palm are called the:",
+                        answerParts: ["metacarpals"]
+                    },
+                    {
+                        promptText: "The bones of the fingers are called the:",
+                        answerParts: ["phalanges"]
+                    }
+                ],
+                "data/Bushong/RadiographicPositioning.json": [
+                    {
+                        promptText: "What projection is used to demonstrate the carpal canal?",
+                        answerParts: ["carpal", "canal"]
+                    },
+                    {
+                        promptText: "PA",
+                        answerParts: ["posteroanterior"]
+                    }
+                ]
+            };
+
+            // ---------- State ----------
+            let books = [];
+            let currentBook = null;
+            let selectedChapters = [];       // array of chapter file paths
+            let allTerms = [];
+            let currentTermIndex = 0;
+            let score = { correct: 0, total: 0 };
+            let quizActive = false;
+
+            // DOM elements
+            const selectionPanel = document.getElementById('selection-panel');
+            const quizPanel = document.getElementById('quiz-panel');
+            const resultsPanel = document.getElementById('results-panel');
+            const bookSelect = document.getElementById('bookSelect');
+            const chapterListContainer = document.getElementById('chapterListContainer');
+            const chapterCheckboxes = document.getElementById('chapterCheckboxes');
+            const startBtn = document.getElementById('startBtn');
+            const loadingStatus = document.getElementById('loadingStatus');
+            const promptDisplay = document.getElementById('promptDisplay');
+            const answerArea = document.getElementById('answerArea');
+            const resultDisplay = document.getElementById('resultDisplay');
+            const submitBtn = document.getElementById('submitBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const finalScore = document.getElementById('finalScore');
+            const restartBtn = document.getElementById('restartBtn');
+
+            // ---------- Initialization ----------
+            async function init() {
+                try {
+                    const response = await fetch(GITHUB_RAW_BASE + BOOKS_JSON_PATH);
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    books = await response.json();
+                } catch (error) {
+                    console.warn('Failed to fetch books.json from GitHub, using fallback data.', error);
+                    books = FALLBACK_BOOKS;
+                }
+                populateBookSelect();
+            }
+
+            function populateBookSelect() {
+                bookSelect.innerHTML = '<option value="">-- Choose a book --</option>';
+                books.forEach((book, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = book.name;
+                    bookSelect.appendChild(option);
+                });
+                loadingStatus.style.display = 'none';
+            }
+
+            // ---------- Book / Chapter Selection ----------
+            bookSelect.addEventListener('change', function() {
+                const idx = this.value;
+                if (idx === '') {
+                    chapterListContainer.style.display = 'none';
+                    startBtn.disabled = true;
+                    currentBook = null;
+                    return;
+                }
+                currentBook = books[parseInt(idx)];
+                renderChapterCheckboxes(currentBook.chapters);
+                chapterListContainer.style.display = 'block';
+                updateStartButton();
+            });
+
+            function renderChapterCheckboxes(chapters) {
+                chapterCheckboxes.innerHTML = '';
+                chapters.forEach((chapter, i) => {
+                    const label = document.createElement('label');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = chapter.file;   // store file path
+                    checkbox.addEventListener('change', updateStartButton);
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(chapter.name));
+                    chapterCheckboxes.appendChild(label);
+                });
+            }
+
+            function updateStartButton() {
+                const checked = chapterCheckboxes.querySelectorAll('input[type="checkbox"]:checked');
+                startBtn.disabled = checked.length === 0;
+            }
+
+            // ---------- Start Test ----------
+            startBtn.addEventListener('click', async function() {
+                const checked = chapterCheckboxes.querySelectorAll('input[type="checkbox"]:checked');
+                selectedChapters = Array.from(checked).map(cb => cb.value);
+                if (selectedChapters.length === 0) return;
+
+                // Load terms from selected chapters
+                allTerms = [];
+                for (const filePath of selectedChapters) {
+                    try {
+                        const url = GITHUB_RAW_BASE + filePath;
+                        const resp = await fetch(url);
+                        if (!resp.ok) throw new Error('Failed to fetch ' + filePath);
+                        const terms = await resp.json();
+                        allTerms = allTerms.concat(terms);
+                    } catch (error) {
+                        // Fallback to embedded data if available
+                        console.warn('Fetch failed for ' + filePath, error);
+                        if (FALLBACK_CHAPTERS[filePath]) {
+                            allTerms = allTerms.concat(FALLBACK_CHAPTERS[filePath]);
+                        } else {
+                            alert('Error loading chapter: ' + filePath);
+                        }
+                    }
+                }
+                if (allTerms.length === 0) {
+                    alert('No terms found in selected chapters.');
+                    return;
+                }
+                // Shuffle terms
+                allTerms = shuffleArray(allTerms);
+                currentTermIndex = 0;
+                score = { correct: 0, total: 0 };
+                quizActive = true;
+                selectionPanel.style.display = 'none';
+                quizPanel.style.display = 'block';
+                resultsPanel.style.display = 'none';
+                showCurrentTerm();
+            });
+
+            function shuffleArray(arr) {
+                const a = [...arr];
+                for (let i = a.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [a[i], a[j]] = [a[j], a[i]];
+                }
+                return a;
+            }
+
+            // ---------- Quiz Display ----------
+            function showCurrentTerm() {
+                const term = allTerms[currentTermIndex];
+                promptDisplay.innerHTML = '';
+                answerArea.innerHTML = '';
+                resultDisplay.style.display = 'none';
+                resultDisplay.innerHTML = '';
+                submitBtn.style.display = 'inline-block';
+                nextBtn.style.display = 'none';
+
+                // Prompt
+                if (term.promptImage) {
+                    const img = document.createElement('img');
+                    img.src = term.promptImage;
+                    img.alt = 'Prompt image';
+                    promptDisplay.appendChild(img);
+                } else {
+                    promptDisplay.textContent = term.promptText || 'Define the following:';
+                }
+
+                // Pre‑text
+                if (term.preText) {
+                    const pre = document.createElement('span');
+                    pre.className = 'pre-text';
+                    pre.textContent = term.preText;
+                    answerArea.appendChild(pre);
+                }
+
+                // Input fields for each word in answerParts
+                const inputs = [];
+                term.answerParts.forEach((word, idx) => {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'word-input';
+                    input.dataset.index = idx;
+                    input.autocomplete = 'off';
+                    input.autocapitalize = 'off';
+                    input.spellcheck = false;
+                    // Adjust width based on word length (min 80px)
+                    input.style.width = Math.max(80, word.length * 12 + 20) + 'px';
+                    input.addEventListener('keydown', handleInputKeydown);
+                    answerArea.appendChild(input);
+                    inputs.push(input);
+                });
+
+                // Post‑text
+                if (term.postText) {
+                    const post = document.createElement('span');
+                    post.className = 'post-text';
+                    post.textContent = term.postText;
+                    answerArea.appendChild(post);
+                }
+
+                // Store current inputs for later use
+                answerArea.dataset.inputs = JSON.stringify(inputs.map(inp => inp.dataset.index));
+                // Focus first input
+                if (inputs.length > 0) inputs[0].focus();
+
+                // Update score display
+                scoreDisplay.textContent = `Score: ${score.correct} / ${score.total}`;
+            }
+
+            function handleInputKeydown(e) {
+                if (e.key === ' ') {
+                    e.preventDefault();
+                    const inputs = Array.from(answerArea.querySelectorAll('.word-input'));
+                    const idx = inputs.indexOf(e.target);
+                    if (idx < inputs.length - 1) {
+                        inputs[idx + 1].focus();
+                    }
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    submitAnswer();
+                }
+            }
+
+            // ---------- Submission & Grading ----------
+            submitBtn.addEventListener('click', submitAnswer);
+
+            function submitAnswer() {
+                if (!quizActive) return;
+                const term = allTerms[currentTermIndex];
+                const inputs = Array.from(answerArea.querySelectorAll('.word-input'));
+                const userWords = inputs.map(inp => inp.value.trim());
+
+                // Build result HTML
+                let resultHTML = '<span class="pre-text">' + (term.preText || '') + '</span>';
+                for (let i = 0; i < term.answerParts.length; i++) {
+                    const correctWord = term.answerParts[i];
+                    const userWord = userWords[i] || '';
+                    resultHTML += '<span class="result-letters">';
+                    const maxLen = Math.max(correctWord.length, userWord.length);
+                    for (let j = 0; j < maxLen; j++) {
+                        const correctChar = correctWord[j];
+                        const userChar = userWord[j];
+                        if (j < correctWord.length && j < userWord.length) {
+                            // Both exist: compare
+                            if (correctChar.toLowerCase() === userChar.toLowerCase()) {
+                                resultHTML += `<span class="letter-correct">${escapeHTML(userChar)}</span>`;
+                            } else {
+                                resultHTML += `<span class="letter-wrong">${escapeHTML(userChar)}</span>`;
+                            }
+                        } else if (j < correctWord.length && j >= userWord.length) {
+                            // Missing letter
+                            resultHTML += `<span class="letter-missing">_</span>`;
+                        } else {
+                            // Extra letter (userWord longer than correct)
+                            resultHTML += `<span class="letter-wrong">${escapeHTML(userChar)}</span>`;
+                        }
+                    }
+                    resultHTML += '</span>';
+                    if (i < term.answerParts.length - 1) {
+                        resultHTML += ' ';
+                    }
+                }
+                resultHTML += '<span class="post-text">' + (term.postText || '') + '</span>';
+
+                // Check if entire answer is correct
+                const isCorrect = term.answerParts.every((word, i) => word.toLowerCase() === (userWords[i] || '').toLowerCase());
+                score.total++;
+                if (isCorrect) score.correct++;
+                scoreDisplay.textContent = `Score: ${score.correct} / ${score.total}`;
+
+                // Display result
+                resultDisplay.innerHTML = resultHTML;
+                resultDisplay.style.display = 'block';
+                // Hide inputs and submit button
+                inputs.forEach(inp => inp.style.display = 'none');
+                submitBtn.style.display = 'none';
+                nextBtn.style.display = 'inline-block';
+                nextBtn.focus();
+            }
+
+            function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            // ---------- Next / Continue ----------
+            nextBtn.addEventListener('click', function() {
+                currentTermIndex++;
+                if (currentTermIndex < allTerms.length) {
+                    showCurrentTerm();
+                } else {
+                    // End of quiz
+                    quizActive = false;
+                    quizPanel.style.display = 'none';
+                    resultsPanel.style.display = 'block';
+                    finalScore.textContent = `You answered ${score.correct} out of ${score.total} correctly.`;
+                }
+            });
+
+            // ---------- Restart ----------
+            restartBtn.addEventListener('click', function() {
+                resultsPanel.style.display = 'none';
+                selectionPanel.style.display = 'block';
+                bookSelect.value = '';
+                chapterListContainer.style.display = 'none';
+                startBtn.disabled = true;
+                currentBook = null;
+                selectedChapters = [];
+                allTerms = [];
+                currentTermIndex = 0;
+                score = { correct: 0, total: 0 };
+            });
+
+            // Start the app
+            init();
+        })();
+    </script>
+</body>
+</html>
