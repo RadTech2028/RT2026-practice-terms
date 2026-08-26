@@ -1,0 +1,29 @@
+[
+  {
+    "promptText": "MCP",
+    "answerParts": ["metacarpophalangeal"],
+    "postText": " joint"
+  },
+  {
+    "promptText": "PIP",
+    "answerParts": ["proximal", "interphalangeal"],
+    "postText": " joint"
+  },
+  {
+    "promptText": "DIP",
+    "answerParts": ["distal", "interphalangeal"],
+    "postText": " joint"
+  },
+  {
+    "promptText": "The bones of the wrist are called the:",
+    "answerParts": ["carpals"]
+  },
+  {
+    "promptText": "The bones of the palm are called the:",
+    "answerParts": ["metacarpals"]
+  },
+  {
+    "promptText": "The bones of the fingers are called the:",
+    "answerParts": ["phalanges"]
+  }
+]
