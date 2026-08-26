@@ -1,29 +1,362 @@
 [
   {
-    "promptText": "MCP",
-    "answerParts": ["metacarpophalangeal"],
-    "postText": " joint"
+    "promptText": "Fluid-filled cyst with wall of fibrous tissue",
+    "answerParts": ["bone", "cyst"]
   },
   {
-    "promptText": "PIP",
-    "answerParts": ["proximal", "interphalangeal"],
-    "postText": " joint"
+    "promptText": "Inflammation of bursa",
+    "answerParts": ["bursitis"]
+  },
+  {
+    "promptText": "Displacement of bone from joint space",
+    "answerParts": ["dislocation"]
+  },
+  {
+    "promptText": "Disruption in continuity of bone",
+    "answerParts": ["fracture"]
+  },
+  {
+    "promptText": "Fracture at base of first metacarpal",
+    "answerParts": ["Bennett", "fracture"]
+  },
+  {
+    "promptText": "Fracture of metacarpal neck",
+    "answerParts": ["Boxer", "fracture"]
+  },
+  {
+    "promptText": "Fracture of distal radius with posterior (dorsal) displacement",
+    "answerParts": ["Colles", "fracture"]
+  },
+  {
+    "promptText": "Fracture of distal radius with anterior (palmar) displacement",
+    "answerParts": ["Smith", "fracture"]
+  },
+  {
+    "promptText": "Impacted fracture with bulging of periosteum",
+    "answerParts": ["torus", "fracture"]
+  },
+  {
+    "promptText": "Hereditary form of arthritis in which uric acid is deposited in joints",
+    "answerParts": ["gout"]
+  },
+  {
+    "promptText": "Accumulation of fluid in joint associated with underlying condition",
+    "answerParts": ["joint", "effusion"]
+  },
+  {
+    "promptText": "Transfer of cancerous lesion from one area to another",
+    "answerParts": ["metastases"]
+  },
+  {
+    "promptText": "Form of arthritis marked by progressive cartilage deterioration in synovial joints and vertebrae",
+    "answerParts": ["osteoarthritis"]
+  },
+  {
+    "promptText": "Inflammation of bone owing to pyogenic infection",
+    "answerParts": ["osteomyelitis"]
+  },
+  {
+    "promptText": "Increased density of atypically soft bone",
+    "answerParts": ["osteopetrosis"]
+  },
+  {
+    "promptText": "Loss of bone density",
+    "answerParts": ["osteoporosis"]
+  },
+  {
+    "promptText": "Chronic, systemic, inflammatory collagen disease",
+    "answerParts": ["rheumatoid", "arthritis"]
+  },
+  {
+    "promptText": "New tissue growth where cell proliferation is uncontrolled",
+    "answerParts": ["tumor"]
+  },
+  {
+    "promptText": "Malignant tumor arising from cartilage cells",
+    "answerParts": ["chondrosarcoma"]
+  },
+  {
+    "promptText": "Benign tumor consisting of cartilage",
+    "answerParts": ["enchondroma"]
+  },
+  {
+    "promptText": "Malignant tumor of bone arising in medullary tissue",
+    "answerParts": ["Ewing", "sarcoma"]
+  },
+  {
+    "promptText": "Malignant, primary tumor of bone with bone or cartilage formation",
+    "answerParts": ["osteosarcoma"]
+  },
+  {
+    "promptText": "CMC",
+    "answerParts": ["carpometacarpal"]
   },
   {
     "promptText": "DIP",
-    "answerParts": ["distal", "interphalangeal"],
-    "postText": " joint"
+    "answerParts": ["distal", "interphalangeal"]
   },
   {
-    "promptText": "The bones of the wrist are called the:",
-    "answerParts": ["carpals"]
+    "promptText": "IP",
+    "answerParts": ["interphalangeal"]
   },
   {
-    "promptText": "The bones of the palm are called the:",
+    "promptText": "MC",
+    "answerParts": ["metacarpal"]
+  },
+  {
+    "promptText": "MCP",
+    "answerParts": ["metacarpophalangeal"]
+  },
+  {
+    "promptText": "PIP",
+    "answerParts": ["proximal", "interphalangeal"]
+  },
+  {
+    "promptText": "Largest bone in the proximal carpal row; palpable near the base of the thumb",
+    "answerParts": ["scaphoid"]
+  },
+  {
+    "promptText": "Crescent-shaped carpal that articulates with the radius proximally",
+    "answerParts": ["lunate"]
+  },
+  {
+    "promptText": "Pyramidal carpal that articulates anteriorly with the hamate",
+    "answerParts": ["triquetrum"]
+  },
+  {
+    "promptText": "Pea-shaped bone situated anterior to the triquetrum",
+    "answerParts": ["pisiform"]
+  },
+  {
+    "promptText": "Carpal with a tubercle and groove on the anterior surface; forms lateral margin of carpal groove",
+    "answerParts": ["trapezium"]
+  },
+  {
+    "promptText": "Carpal with smaller surface anteriorly than posteriorly",
+    "answerParts": ["trapezoid"]
+  },
+  {
+    "promptText": "Largest and most centrally located carpal; articulates with base of third metacarpal",
+    "answerParts": ["capitate"]
+  },
+  {
+    "promptText": "Wedge-shaped carpal with a prominent hook on its anterior surface",
+    "answerParts": ["hamate"]
+  },
+  {
+    "promptText": "Bones of the digits",
+    "answerParts": ["phalanges"]
+  },
+  {
+    "promptText": "Bones of the palm",
     "answerParts": ["metacarpals"]
   },
   {
-    "promptText": "The bones of the fingers are called the:",
-    "answerParts": ["phalanges"]
+    "promptText": "Bones of the wrist",
+    "answerParts": ["carpals"]
+  },
+  {
+    "promptText": "The first digit is also known as the:",
+    "answerParts": ["thumb"]
+  },
+  {
+    "promptText": "The second digit is also known as the:",
+    "answerParts": ["index", "finger"]
+  },
+  {
+    "promptText": "The third digit is also known as the:",
+    "answerParts": ["middle", "finger"]
+  },
+  {
+    "promptText": "The fourth digit is also known as the:",
+    "answerParts": ["ring", "finger"]
+  },
+  {
+    "promptText": "The fifth digit is also known as the:",
+    "answerParts": ["small", "finger"]
+  },
+  {
+    "promptText": "The area below the metacarpal head where fractures often occur",
+    "answerParts": ["neck"]
+  },
+  {
+    "promptText": "The knuckles are formed by the:",
+    "answerParts": ["metacarpal", "heads"]
+  },
+  {
+    "promptText": "The largest bone in the proximal carpal row",
+    "answerParts": ["scaphoid"]
+  },
+  {
+    "promptText": "The most commonly fractured carpal bone",
+    "answerParts": ["scaphoid"]
+  },
+  {
+    "promptText": "The depression on the posterior wrist visible when the thumb is abducted and extended",
+    "answerParts": ["anatomic", "snuffbox"]
+  },
+  {
+    "promptText": "The strong fibrous band that forms the roof of the carpal tunnel",
+    "answerParts": ["flexor", "retinaculum"]
+  },
+  {
+    "promptText": "The passageway between the carpal sulcus and flexor retinaculum",
+    "answerParts": ["carpal", "canal"]
+  },
+  {
+    "promptText": "Syndrome resulting from compression of the median nerve inside the carpal tunnel",
+    "answerParts": ["carpal", "tunnel", "syndrome"]
+  },
+  {
+    "promptText": "The lateral bone of the forearm",
+    "answerParts": ["radius"]
+  },
+  {
+    "promptText": "The medial bone of the forearm",
+    "answerParts": ["ulna"]
+  },
+  {
+    "promptText": "The proximal process of the ulna that forms the elbow",
+    "answerParts": ["olecranon", "process"]
+  },
+  {
+    "promptText": "The anterior projection of the proximal ulna that forms the lower part of the trochlear notch",
+    "answerParts": ["coronoid", "process"]
+  },
+  {
+    "promptText": "The depression on the lateral aspect of the coronoid process for articulation with the radius",
+    "answerParts": ["radial", "notch"]
+  },
+  {
+    "promptText": "The rounded distal end of the ulna",
+    "answerParts": ["head"]
+  },
+  {
+    "promptText": "The conic projection on the posteromedial side of the distal ulna",
+    "answerParts": ["ulnar", "styloid", "process"]
+  },
+  {
+    "promptText": "The flat disk-like proximal end of the radius",
+    "answerParts": ["head"]
+  },
+  {
+    "promptText": "The constricted area just below the head of the radius",
+    "answerParts": ["neck"]
+  },
+  {
+    "promptText": "The roughened process on the medial side of the radius just below the neck",
+    "answerParts": ["radial", "tuberosity"]
+  },
+  {
+    "promptText": "The conic projection on the lateral surface of the distal radius",
+    "answerParts": ["radial", "styloid", "process"]
+  },
+  {
+    "promptText": "The bone of the arm",
+    "answerParts": ["humerus"]
+  },
+  {
+    "promptText": "The entire distal end of the humerus",
+    "answerParts": ["humeral", "condyle"]
+  },
+  {
+    "promptText": "The medial articulation of the humeral condyle",
+    "answerParts": ["trochlea"]
+  },
+  {
+    "promptText": "The lateral articulation of the humeral condyle",
+    "answerParts": ["capitulum"]
+  },
+  {
+    "promptText": "The medial and lateral bony prominences superior to the humeral condyle",
+    "answerParts": ["epicondyles"]
+  },
+  {
+    "promptText": "The depression on the anterior humerus that receives the coronoid process during flexion",
+    "answerParts": ["coronoid", "fossa"]
+  },
+  {
+    "promptText": "The depression on the anterior humerus that receives the radial head during flexion",
+    "answerParts": ["radial", "fossa"]
+  },
+  {
+    "promptText": "The deep depression on the posterior humerus that receives the olecranon process during extension",
+    "answerParts": ["olecranon", "fossa"]
+  },
+  {
+    "promptText": "The large, smooth, rounded proximal end of the humerus",
+    "answerParts": ["head"]
+  },
+  {
+    "promptText": "The narrow constriction just below the head of the humerus",
+    "answerParts": ["anatomic", "neck"]
+  },
+  {
+    "promptText": "The constriction of the humerus below the tubercles; common fracture site",
+    "answerParts": ["surgical", "neck"]
+  },
+  {
+    "promptText": "The smaller anterior tubercle of the proximal humerus",
+    "answerParts": ["lesser", "tubercle"]
+  },
+  {
+    "promptText": "The larger lateral tubercle of the proximal humerus",
+    "answerParts": ["greater", "tubercle"]
+  },
+  {
+    "promptText": "The deep groove between the greater and lesser tubercles of the humerus",
+    "answerParts": ["intertubercular", "groove"]
+  },
+  {
+    "promptText": "AP",
+    "answerParts": ["anteroposterior"]
+  },
+  {
+    "promptText": "PA",
+    "answerParts": ["posteroanterior"]
+  },
+  {
+    "promptText": "RAO",
+    "answerParts": ["right", "anterior", "oblique"]
+  },
+  {
+    "promptText": "LAO",
+    "answerParts": ["left", "anterior", "oblique"]
+  },
+  {
+    "promptText": "RPO",
+    "answerParts": ["right", "posterior", "oblique"]
+  },
+  {
+    "promptText": "LPO",
+    "answerParts": ["left", "posterior", "oblique"]
+  },
+  {
+    "promptText": "A general term for a slanted or angled projection",
+    "answerParts": ["oblique"]
+  },
+  {
+    "promptText": "A projection taken from the side",
+    "answerParts": ["lateral"]
+  },
+  {
+    "promptText": "The joint between the phalanges",
+    "answerParts": ["interphalangeal", "joint"]
+  },
+  {
+    "promptText": "The joint between the proximal and middle phalanges",
+    "answerParts": ["proximal", "interphalangeal", "joint"]
+  },
+  {
+    "promptText": "The joint between the middle and distal phalanges",
+    "answerParts": ["distal", "interphalangeal", "joint"]
+  },
+  {
+    "promptText": "The joint between the metacarpals and phalanges",
+    "answerParts": ["metacarpophalangeal", "joint"]
+  },
+  {
+    "promptText": "The joint between the carpals and metacarpals",
+    "answerParts": ["carpometacarpal", "joint"]
   }
 ]
