@@ -35,4 +35,25 @@
       }
     ]
   }
+  {
+  "name": "Acronyms",
+  "chapters": [
+    {
+      "name": "Positional Acronyms",
+      "file": "data/Acronyms/PositionalAcronyms.json"
+    },
+    {
+      "name": "Anatomy Acronyms",
+      "file": "data/Acronyms/AnatomyAcronyms.json"
+    },
+    {
+      "name": "Other Acronyms",
+      "file": "data/Acronyms/OtherAcronyms.json"
+    },
+    {
+      "name": "Organizations",
+      "file": "data/Acronyms/Organizations.json"
+    }
+  ]
+}
 ]
