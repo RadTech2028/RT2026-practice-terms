@@ -149,6 +149,16 @@
             text-align: center;
             margin-top: 1rem;
         }
+        .answer-comparison {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .answer-comparison p {
+            margin-bottom: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -197,7 +207,7 @@
         (function() {
             // ---------- Configuration ----------
             // Base URL for raw GitHub content. Change this to your repo.
-            const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/USERNAME/REPOSITORY/main/";
+            const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/JimmyCoderGuy/RT2026-practice-terms/main/";
             // Path to books.json (relative to raw base)
             const BOOKS_JSON_PATH = "data/books.json";
 
@@ -484,12 +494,12 @@
                 const inputs = Array.from(answerArea.querySelectorAll('.word-input'));
                 const userWords = inputs.map(inp => inp.value.trim());
 
-                // Build result HTML
-                let resultHTML = '<span class="pre-text">' + (term.preText || '') + '</span>';
+                // Build user's answer with coloring
+                let userResultHTML = '<span class="pre-text">' + (term.preText || '') + '</span>';
                 for (let i = 0; i < term.answerParts.length; i++) {
                     const correctWord = term.answerParts[i];
                     const userWord = userWords[i] || '';
-                    resultHTML += '<span class="result-letters">';
+                    userResultHTML += '<span class="result-letters">';
                     const maxLen = Math.max(correctWord.length, userWord.length);
                     for (let j = 0; j < maxLen; j++) {
                         const correctChar = correctWord[j];
@@ -497,24 +507,27 @@
                         if (j < correctWord.length && j < userWord.length) {
                             // Both exist: compare
                             if (correctChar.toLowerCase() === userChar.toLowerCase()) {
-                                resultHTML += `<span class="letter-correct">${escapeHTML(userChar)}</span>`;
+                                userResultHTML += `<span class="letter-correct">${escapeHTML(userChar)}</span>`;
                             } else {
-                                resultHTML += `<span class="letter-wrong">${escapeHTML(userChar)}</span>`;
+                                userResultHTML += `<span class="letter-wrong">${escapeHTML(userChar)}</span>`;
                             }
                         } else if (j < correctWord.length && j >= userWord.length) {
                             // Missing letter
-                            resultHTML += `<span class="letter-missing">_</span>`;
+                            userResultHTML += `<span class="letter-missing">_</span>`;
                         } else {
                             // Extra letter (userWord longer than correct)
-                            resultHTML += `<span class="letter-wrong">${escapeHTML(userChar)}</span>`;
+                            userResultHTML += `<span class="letter-wrong">${escapeHTML(userChar)}</span>`;
                         }
                     }
-                    resultHTML += '</span>';
+                    userResultHTML += '</span>';
                     if (i < term.answerParts.length - 1) {
-                        resultHTML += ' ';
+                        userResultHTML += ' ';
                     }
                 }
-                resultHTML += '<span class="post-text">' + (term.postText || '') + '</span>';
+                userResultHTML += '<span class="post-text">' + (term.postText || '') + '</span>';
+
+                // Build full correct answer text
+                const correctFullText = (term.preText || '') + term.answerParts.join(' ') + (term.postText || '');
 
                 // Check if entire answer is correct
                 const isCorrect = term.answerParts.every((word, i) => word.toLowerCase() === (userWords[i] || '').toLowerCase());
@@ -522,9 +535,15 @@
                 if (isCorrect) score.correct++;
                 scoreDisplay.textContent = `Score: ${score.correct} / ${score.total}`;
 
-                // Display result
-                resultDisplay.innerHTML = resultHTML;
+                // Display result with both user and correct answer
+                resultDisplay.innerHTML = `
+                    <div class="answer-comparison">
+                        <p><strong>Your answer:</strong> ${userResultHTML}</p>
+                        <p><strong>Correct answer:</strong> ${escapeHTML(correctFullText)}</p>
+                    </div>
+                `;
                 resultDisplay.style.display = 'block';
+
                 // Hide inputs and submit button
                 inputs.forEach(inp => inp.style.display = 'none');
                 submitBtn.style.display = 'none';
