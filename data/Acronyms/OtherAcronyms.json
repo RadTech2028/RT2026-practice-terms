@@ -1,0 +1,98 @@
+[
+  {
+    "promptText": "ALARA",
+    "answerParts": ["as", "low", "as", "reasonably", "achievable"]
+  },
+  {
+    "promptText": "HIPAA",
+    "answerParts": ["Health", "Insurance", "Portability", "and", "Accountability", "Act"]
+  },
+  {
+    "promptText": "CPR",
+    "answerParts": ["cardiopulmonary", "resuscitation"]
+  },
+  {
+    "promptText": "PPE",
+    "answerParts": ["personal", "protective", "equipment"]
+  },
+  {
+    "promptText": "DNR",
+    "answerParts": ["do", "not", "resuscitate"]
+  },
+  {
+    "promptText": "NPO",
+    "answerParts": ["nothing", "by", "mouth"]
+  },
+  {
+    "promptText": "BID",
+    "answerParts": ["twice", "a", "day"]
+  },
+  {
+    "promptText": "TID",
+    "answerParts": ["three", "times", "a", "day"]
+  },
+  {
+    "promptText": "QID",
+    "answerParts": ["four", "times", "a", "day"]
+  },
+  {
+    "promptText": "PRN",
+    "answerParts": ["as", "needed"]
+  },
+  {
+    "promptText": "STAT",
+    "answerParts": ["immediately"]
+  },
+  {
+    "promptText": "QOD",
+    "answerParts": ["every", "other", "day"]
+  },
+  {
+    "promptText": "HS",
+    "answerParts": ["at", "bedtime"]
+  },
+  {
+    "promptText": "PC",
+    "answerParts": ["after", "meals"]
+  },
+  {
+    "promptText": "AC",
+    "answerParts": ["before", "meals"]
+  },
+  {
+    "promptText": "PO",
+    "answerParts": ["by", "mouth"]
+  },
+  {
+    "promptText": "IV",
+    "answerParts": ["intravenous"]
+  },
+  {
+    "promptText": "IM",
+    "answerParts": ["intramuscular"]
+  },
+  {
+    "promptText": "SC",
+    "answerParts": ["subcutaneous"]
+  },
+  {
+    "promptText": "CT",
+    "answerParts": ["computed", "tomography"]
+  },
+  {
+    "promptText": "MRI",
+    "answerParts": ["magnetic", "resonance", "imaging"]
+  },
+  {
+    "promptText": "US",
+    "answerParts": ["ultrasound"]
+  },
+  {
+    "promptText": "RT",
+    "answerParts": ["radiologic", "technologist"]
+  },
+  {
+    "promptText": "Radiographer",
+    "answerParts": ["radiographer"]
+  }
+]
