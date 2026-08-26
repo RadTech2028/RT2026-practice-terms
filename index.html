@@ -27,7 +27,7 @@
             min-height: 100vh;
         }
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             width: 100%;
             background: var(--card-bg);
             border-radius: 12px;
@@ -168,6 +168,47 @@
             border-radius: 8px;
             margin-bottom: 1rem;
         }
+        /* Study mode two-column layout */
+        .study-layout {
+            display: flex;
+            gap: 1rem;
+            min-height: 400px;
+        }
+        .study-list {
+            flex: 1;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow-y: auto;
+            max-height: 70vh;
+            background: white;
+        }
+        .study-list-item {
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
+        }
+        .study-list-item:hover {
+            background: #f0f7ff;
+        }
+        .study-list-item.active {
+            background: #dbeafe;
+            font-weight: 600;
+            border-left: 4px solid var(--accent);
+        }
+        .study-detail {
+            flex: 2;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+        }
+        .study-sort {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
         .study-answer {
             font-size: 1.4rem;
             font-weight: 700;
@@ -175,16 +216,12 @@
             margin-top: 1rem;
             display: none;
         }
-        .study-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
+        .study-detail img {
+            max-width: 100%;
+            border-radius: 8px;
         }
-        .study-sort {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .back-button {
+            margin-top: 0.5rem;
         }
     </style>
 </head>
@@ -225,18 +262,6 @@
 
         <!-- Study Panel -->
         <div id="study-panel" class="panel" style="display:none;">
-            <div id="studyCard" class="study-card">
-                <div id="studyPrompt" class="prompt"></div>
-                <div id="studyAnswer" class="study-answer"></div>
-                <div class="action-buttons">
-                    <button id="revealBtn">Reveal Answer</button>
-                </div>
-            </div>
-            <div class="study-nav">
-                <button id="prevBtn">← Previous</button>
-                <span id="studyCounter">0 / 0</span>
-                <button id="nextStudyBtn">Next →</button>
-            </div>
             <div class="study-sort">
                 <label for="sortSelect">Sort by:</label>
                 <select id="sortSelect">
@@ -245,6 +270,12 @@
                     <option value="original">Original Order</option>
                 </select>
                 <button id="exitStudyBtn" style="margin-left:auto;">Back to Selection</button>
+            </div>
+            <div class="study-layout">
+                <div class="study-list" id="studyListContainer"></div>
+                <div class="study-detail" id="studyDetail">
+                    <p style="color:gray;">Select a term to see details</p>
+                </div>
             </div>
         </div>
 
@@ -294,12 +325,8 @@
             const finalScore = document.getElementById('finalScore');
             const restartBtn = document.getElementById('restartBtn');
             // Study elements
-            const studyPrompt = document.getElementById('studyPrompt');
-            const studyAnswer = document.getElementById('studyAnswer');
-            const revealBtn = document.getElementById('revealBtn');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextStudyBtn = document.getElementById('nextStudyBtn');
-            const studyCounter = document.getElementById('studyCounter');
+            const studyListContainer = document.getElementById('studyListContainer');
+            const studyDetail = document.getElementById('studyDetail');
             const sortSelect = document.getElementById('sortSelect');
             const exitStudyBtn = document.getElementById('exitStudyBtn');
 
@@ -586,11 +613,11 @@
                 studyTerms = sortTerms(originalTerms, sortSelect.value);
                 studyActive = true;
                 quizActive = false;
-                currentTermIndex = 0;
+                currentTermIndex = 0; // Not used in study mode now
                 selectionPanel.style.display = 'none';
                 quizPanel.style.display = 'none';
                 studyPanel.style.display = 'block';
-                showStudyTerm();
+                renderStudyList();
             });
 
             function sortTerms(terms, sortType) {
@@ -610,51 +637,80 @@
             sortSelect.addEventListener('change', function() {
                 if (studyActive) {
                     studyTerms = sortTerms(originalTerms, this.value);
-                    currentTermIndex = 0;
-                    showStudyTerm();
+                    renderStudyList();
+                    // Clear detail or select first term
+                    if (studyTerms.length > 0) {
+                        showStudyDetail(studyTerms[0]);
+                        highlightListItem(0);
+                    } else {
+                        studyDetail.innerHTML = '<p style="color:gray;">Select a term to see details</p>';
+                    }
                 }
             });
 
-            function showStudyTerm() {
-                if (!studyActive) return;
-                const term = studyTerms[currentTermIndex];
-                studyPrompt.innerHTML = '';
+            function renderStudyList() {
+                studyListContainer.innerHTML = '';
+                studyTerms.forEach((term, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'study-list-item';
+                    item.textContent = term.promptText || 'Unnamed term';
+                    item.addEventListener('click', function() {
+                        showStudyDetail(term);
+                        highlightListItem(index);
+                    });
+                    studyListContainer.appendChild(item);
+                });
+                if (studyTerms.length > 0) {
+                    showStudyDetail(studyTerms[0]);
+                    highlightListItem(0);
+                } else {
+                    studyDetail.innerHTML = '<p style="color:gray;">No terms to display</p>';
+                }
+            }
+
+            function showStudyDetail(term) {
+                studyDetail.innerHTML = '';
+                const promptDiv = document.createElement('div');
+                promptDiv.className = 'prompt';
                 if (term.promptImage) {
                     const img = document.createElement('img');
                     img.src = term.promptImage;
                     img.alt = 'Prompt image';
-                    studyPrompt.appendChild(img);
+                    promptDiv.appendChild(img);
                 } else {
-                    studyPrompt.textContent = term.promptText || 'Define the following:';
+                    promptDiv.textContent = term.promptText || 'Define the following:';
                 }
-                studyAnswer.style.display = 'none';
-                studyAnswer.textContent = (term.preText || '') + term.answerParts.join(' ') + (term.postText || '');
-                studyCounter.textContent = `${currentTermIndex + 1} / ${studyTerms.length}`;
+                studyDetail.appendChild(promptDiv);
+
+                const answerDiv = document.createElement('div');
+                answerDiv.className = 'study-answer';
+                answerDiv.textContent = (term.preText || '') + term.answerParts.join(' ') + (term.postText || '');
+                studyDetail.appendChild(answerDiv);
+
+                const revealBtn = document.createElement('button');
                 revealBtn.textContent = 'Reveal Answer';
+                revealBtn.addEventListener('click', function() {
+                    if (answerDiv.style.display === 'none' || answerDiv.style.display === '') {
+                        answerDiv.style.display = 'block';
+                        revealBtn.textContent = 'Hide Answer';
+                    } else {
+                        answerDiv.style.display = 'none';
+                        revealBtn.textContent = 'Reveal Answer';
+                    }
+                });
+                studyDetail.appendChild(revealBtn);
             }
 
-            revealBtn.addEventListener('click', function() {
-                studyAnswer.style.display = 'block';
-                revealBtn.textContent = 'Hide Answer';
-                revealBtn.onclick = function() {
-                    studyAnswer.style.display = 'none';
-                    revealBtn.textContent = 'Reveal Answer';
-                };
-            });
-
-            prevBtn.addEventListener('click', function() {
-                if (currentTermIndex > 0) {
-                    currentTermIndex--;
-                    showStudyTerm();
-                }
-            });
-
-            nextStudyBtn.addEventListener('click', function() {
-                if (currentTermIndex < studyTerms.length - 1) {
-                    currentTermIndex++;
-                    showStudyTerm();
-                }
-            });
+            function highlightListItem(index) {
+                const items = studyListContainer.querySelectorAll('.study-list-item');
+                items.forEach((item, i) => {
+                    if (i === index) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+            }
 
             exitStudyBtn.addEventListener('click', function() {
                 studyActive = false;
