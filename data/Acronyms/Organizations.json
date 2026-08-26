@@ -1,0 +1,70 @@
+[
+  {
+    "promptText": "ARRT",
+    "answerParts": ["American", "Registry", "of", "Radiologic", "Technologists"]
+  },
+  {
+    "promptText": "ASRT",
+    "answerParts": ["American", "Society", "of", "Radiologic", "Technologists"]
+  },
+  {
+    "promptText": "CAMRT",
+    "answerParts": ["Canadian", "Association", "of", "Medical", "Radiation", "Technologists"]
+  },
+  {
+    "promptText": "RSNA",
+    "answerParts": ["Radiological", "Society", "of", "North", "America"]
+  },
+  {
+    "promptText": "ACR",
+    "answerParts": ["American", "College", "of", "Radiology"]
+  },
+  {
+    "promptText": "JRCERT",
+    "answerParts": ["Joint", "Review", "Committee", "on", "Education", "in", "Radiologic", "Technology"]
+  },
+  {
+    "promptText": "NCRP",
+    "answerParts": ["National", "Council", "on", "Radiation", "Protection", "and", "Measurements"]
+  },
+  {
+    "promptText": "ICRP",
+    "answerParts": ["International", "Commission", "on", "Radiological", "Protection"]
+  },
+  {
+    "promptText": "FDA",
+    "answerParts": ["Food", "and", "Drug", "Administration"]
+  },
+  {
+    "promptText": "NRC",
+    "answerParts": ["Nuclear", "Regulatory", "Commission"]
+  },
+  {
+    "promptText": "OSHA",
+    "answerParts": ["Occupational", "Safety", "and", "Health", "Administration"]
+  },
+  {
+    "promptText": "CDC",
+    "answerParts": ["Centers", "for", "Disease", "Control", "and", "Prevention"]
+  },
+  {
+    "promptText": "WHO",
+    "answerParts": ["World", "Health", "Organization"]
+  },
+  {
+    "promptText": "AAPM",
+    "answerParts": ["American", "Association", "of", "Physicists", "in", "Medicine"]
+  },
+  {
+    "promptText": "SIIM",
+    "answerParts": ["Society", "for", "Imaging", "Informatics", "in", "Medicine"]
+  },
+  {
+    "promptText": "AHRA",
+    "answerParts": ["American", "Healthcare", "Radiology", "Administrators"]
+  },
+  {
+    "promptText": "ISRRT",
+    "answerParts": ["International", "Society", "of", "Radiographers", "and", "Radiological", "Technologists"]
+  }
+]
