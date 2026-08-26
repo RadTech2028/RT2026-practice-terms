@@ -1,0 +1,58 @@
+[
+  {
+    "promptText": "AP",
+    "answerParts": ["anteroposterior"]
+  },
+  {
+    "promptText": "PA",
+    "answerParts": ["posteroanterior"]
+  },
+  {
+    "promptText": "RAO",
+    "answerParts": ["right", "anterior", "oblique"]
+  },
+  {
+    "promptText": "LAO",
+    "answerParts": ["left", "anterior", "oblique"]
+  },
+  {
+    "promptText": "RPO",
+    "answerParts": ["right", "posterior", "oblique"]
+  },
+  {
+    "promptText": "LPO",
+    "answerParts": ["left", "posterior", "oblique"]
+  },
+  {
+    "promptText": "RL",
+    "answerParts": ["right", "lateral"]
+  },
+  {
+    "promptText": "LL",
+    "answerParts": ["left", "lateral"]
+  },
+  {
+    "promptText": "AP axial",
+    "answerParts": ["anteroposterior", "axial"]
+  },
+  {
+    "promptText": "PA axial",
+    "answerParts": ["posteroanterior", "axial"]
+  },
+  {
+    "promptText": "AP oblique",
+    "answerParts": ["anteroposterior", "oblique"]
+  },
+  {
+    "promptText": "PA oblique",
+    "answerParts": ["posteroanterior", "oblique"]
+  },
+  {
+    "promptText": "Lateral decubitus",
+    "answerParts": ["lateral", "decubitus"]
+  },
+  {
+    "promptText": "AP lordotic",
+    "answerParts": ["anteroposterior", "lordotic"]
+  }
+]
