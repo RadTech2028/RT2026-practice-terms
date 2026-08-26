@@ -5,19 +5,7 @@
       {
         "name": "Upper Extremity",
         "file": "data/MerrilsAtlas/UpperExtremity.json"
-      },                                                      <!--
-   {
-        "name": "Lower Extremity",
-        "file": "data/MerrilsAtlas/LowerExtremity.json"
-      },
-      {
-        "name": "Spine and Pelvis",
-        "file": "data/MerrilsAtlas/SpinePelvis.json"
-      },
-      {
-        "name": "Chest and Abdomen",
-        "file": "data/MerrilsAtlas/ChestAbdomen.json"
-      }                                                        -->
+      }
     ]
   },
   {
@@ -26,15 +14,7 @@
       {
         "name": "Radiologic Science Basics",
         "file": "data/Bushong/RadiologicScienceBasics.json"
-      },                                                        <!--
-      {
-        "name": "X-ray Production",
-        "file": "data/Bushong/XrayProduction.json"
-      },
-      {
-        "name": "Image Quality",
-        "file": "data/Bushong/ImageQuality.json"
-      }                                                           -->
+      }
     ]
   },
   {
@@ -43,15 +23,7 @@
       {
         "name": "Radiation Physics",
         "file": "data/CarltonAdlerPrinciples/RadiationPhysics.json"
-      },                                                            <!--
-      {
-        "name": "Radiographic Exposure",
-        "file": "data/CarltonAdlerPrinciples/RadiographicExposure.json"
-      },
-      {
-        "name": "Image Receptors",
-        "file": "data/CarltonAdlerPrinciples/ImageReceptors.json"
-      }                                                               -->
+      }
     ]
   },
   {
@@ -60,15 +32,7 @@
       {
         "name": "Patient Communication",
         "file": "data/CarltonAdlerPatientCare/PatientCommunication.json"
-      },
-      {
-        "name": "Infection Control",
-        "file": "data/CarltonAdlerPatientCare/InfectionControl.json"
-      },                                                              <!--
-      {
-        "name": "Medical Emergencies",
-        "file": "data/CarltonAdlerPatientCare/MedicalEmergencies.json"
-      }                                                               -->
+      }
     ]
   }
 ]
