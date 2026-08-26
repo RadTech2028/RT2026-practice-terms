@@ -143,6 +143,7 @@
             display: flex;
             gap: 1rem;
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
         .score {
             font-weight: 600;
@@ -187,6 +188,9 @@
             cursor: pointer;
             border-bottom: 1px solid #f0f0f0;
             transition: background 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .study-list-item:hover {
             background: #f0f7ff;
@@ -208,20 +212,113 @@
             align-items: center;
             gap: 0.5rem;
             margin-top: 0.5rem;
+            flex-wrap: wrap;
         }
         .study-answer {
             font-size: 1.4rem;
             font-weight: 700;
             color: var(--accent);
             margin-top: 1rem;
+        }
+        .study-definition {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            white-space: pre-wrap;
             display: none;
         }
         .study-detail img {
             max-width: 100%;
             border-radius: 8px;
         }
-        .back-button {
-            margin-top: 0.5rem;
+        .term-count {
+            font-weight: normal;
+            color: #666;
+            margin-left: 4px;
+        }
+        #studyTotalTerms {
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        /* Responsive adjustments for vertical phone */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 1rem;
+                margin-top: 1rem;
+                border-radius: 8px;
+            }
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            select, button {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            .chapter-checkboxes {
+                grid-template-columns: 1fr; /* stack checkboxes vertically */
+            }
+            .quiz-card, .study-card {
+                padding: 1rem;
+            }
+            .prompt {
+                font-size: 1rem;
+            }
+            .word-input {
+                font-size: 1rem;
+                min-width: 60px;
+                padding: 0.3rem 0.5rem;
+            }
+            .answer-area {
+                gap: 0.4rem;
+            }
+            .action-buttons {
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            .action-buttons button {
+                flex: 1 1 auto;
+                min-width: 80px;
+            }
+            .study-layout {
+                flex-direction: column;
+                min-height: auto;
+            }
+            .study-list {
+                max-height: 40vh; /* shorter list so detail can be seen */
+            }
+            .study-list-item {
+                white-space: normal; /* allow wrapping on small screens */
+                word-break: break-word;
+            }
+            .study-detail {
+                flex: none;
+            }
+            .study-sort {
+                gap: 0.3rem;
+                font-size: 0.9rem;
+            }
+            #studyTotalTerms {
+                margin-left: 0;
+                width: 100%;
+                text-align: right;
+            }
+            .study-answer {
+                font-size: 1.2rem;
+            }
+            .study-definition {
+                font-size: 1rem;
+            }
+            .result-letters {
+                font-size: 1rem;
+                letter-spacing: 1px;
+            }
+            .score {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -255,6 +352,7 @@
                 <div class="action-buttons">
                     <button id="submitBtn">Submit (Enter)</button>
                     <button id="nextBtn" style="display:none;">Next</button>
+                    <button id="endTestBtn" style="display:none;">End Test</button>
                 </div>
             </div>
             <div id="scoreDisplay" class="score"></div>
@@ -269,6 +367,7 @@
                     <option value="random">Random</option>
                     <option value="original">Original Order</option>
                 </select>
+                <span id="studyTotalTerms">Total terms: 0</span>
                 <button id="exitStudyBtn" style="margin-left:auto;">Back to Selection</button>
             </div>
             <div class="study-layout">
@@ -296,14 +395,14 @@
             // ---------- State ----------
             let books = [];
             let currentBook = null;
-            let selectedChapters = [];       // array of chapter file paths
-            let allTerms = [];              // terms for the current mode (test/study)
+            let selectedChapters = [];
+            let allTerms = [];
             let currentTermIndex = 0;
             let score = { correct: 0, total: 0 };
             let quizActive = false;
             let studyActive = false;
-            let studyTerms = [];            // sorted terms for study mode
-            let originalTerms = [];         // as loaded before sorting
+            let studyTerms = [];
+            let originalTerms = [];
 
             // DOM elements
             const selectionPanel = document.getElementById('selection-panel');
@@ -321,6 +420,7 @@
             const resultDisplay = document.getElementById('resultDisplay');
             const submitBtn = document.getElementById('submitBtn');
             const nextBtn = document.getElementById('nextBtn');
+            const endTestBtn = document.getElementById('endTestBtn');
             const scoreDisplay = document.getElementById('scoreDisplay');
             const finalScore = document.getElementById('finalScore');
             const restartBtn = document.getElementById('restartBtn');
@@ -329,6 +429,7 @@
             const studyDetail = document.getElementById('studyDetail');
             const sortSelect = document.getElementById('sortSelect');
             const exitStudyBtn = document.getElementById('exitStudyBtn');
+            const studyTotalTerms = document.getElementById('studyTotalTerms');
 
             // ---------- Initialization ----------
             async function init() {
@@ -381,9 +482,32 @@
                     checkbox.value = chapter.file;
                     checkbox.addEventListener('change', updateButtons);
                     label.appendChild(checkbox);
-                    label.appendChild(document.createTextNode(chapter.name));
+
+                    const chapterName = document.createElement('span');
+                    chapterName.textContent = chapter.name;
+                    label.appendChild(chapterName);
+
+                    const countSpan = document.createElement('span');
+                    countSpan.className = 'term-count';
+                    countSpan.textContent = '(loading...)';
+                    label.appendChild(countSpan);
+
                     chapterCheckboxes.appendChild(label);
+
+                    fetchTermCount(chapter.file, countSpan);
                 });
+            }
+
+            async function fetchTermCount(filePath, countSpan) {
+                try {
+                    const url = GITHUB_RAW_BASE + filePath;
+                    const resp = await fetch(url);
+                    if (!resp.ok) throw new Error('Failed to fetch');
+                    const terms = await resp.json();
+                    countSpan.textContent = `(${terms.length} terms)`;
+                } catch (error) {
+                    countSpan.textContent = '(?)';
+                }
             }
 
             function updateButtons() {
@@ -453,6 +577,7 @@
                 resultDisplay.innerHTML = '';
                 submitBtn.style.display = 'inline-block';
                 nextBtn.style.display = 'none';
+                endTestBtn.style.display = 'inline-block';
 
                 if (term.promptImage) {
                     const img = document.createElement('img');
@@ -580,12 +705,21 @@
                 if (currentTermIndex < allTerms.length) {
                     showCurrentTerm();
                 } else {
-                    quizActive = false;
-                    quizPanel.style.display = 'none';
-                    resultsPanel.style.display = 'block';
-                    finalScore.textContent = `You answered ${score.correct} out of ${score.total} correctly.`;
+                    endTest();
                 }
             });
+
+            // ---------- End Test ----------
+            endTestBtn.addEventListener('click', function() {
+                endTest();
+            });
+
+            function endTest() {
+                quizActive = false;
+                quizPanel.style.display = 'none';
+                resultsPanel.style.display = 'block';
+                finalScore.textContent = `You answered ${score.correct} out of ${score.total} correctly.`;
+            }
 
             // ---------- Restart ----------
             restartBtn.addEventListener('click', function() {
@@ -600,6 +734,8 @@
                 allTerms = [];
                 currentTermIndex = 0;
                 score = { correct: 0, total: 0 };
+                quizActive = false;
+                studyActive = false;
             });
 
             // ---------- Study Mode ----------
@@ -613,11 +749,12 @@
                 studyTerms = sortTerms(originalTerms, sortSelect.value);
                 studyActive = true;
                 quizActive = false;
-                currentTermIndex = 0; // Not used in study mode now
+                currentTermIndex = 0;
                 selectionPanel.style.display = 'none';
                 quizPanel.style.display = 'none';
                 studyPanel.style.display = 'block';
                 renderStudyList();
+                studyTotalTerms.textContent = `Total terms: ${studyTerms.length}`;
             });
 
             function sortTerms(terms, sortType) {
@@ -630,7 +767,7 @@
                     });
                 } else if (sortType === 'random') {
                     sorted = shuffleArray(sorted);
-                } // 'original' keeps as loaded
+                }
                 return sorted;
             }
 
@@ -638,12 +775,11 @@
                 if (studyActive) {
                     studyTerms = sortTerms(originalTerms, this.value);
                     renderStudyList();
-                    // Clear detail or select first term
                     if (studyTerms.length > 0) {
                         showStudyDetail(studyTerms[0]);
                         highlightListItem(0);
                     } else {
-                        studyDetail.innerHTML = '<p style="color:gray;">Select a term to see details</p>';
+                        studyDetail.innerHTML = '<p style="color:gray;">No terms to display</p>';
                     }
                 }
             });
@@ -653,7 +789,8 @@
                 studyTerms.forEach((term, index) => {
                     const item = document.createElement('div');
                     item.className = 'study-list-item';
-                    item.textContent = term.promptText || 'Unnamed term';
+                    // Show the term (answer) in the list
+                    item.textContent = (term.preText || '') + term.answerParts.join(' ') + (term.postText || '');
                     item.addEventListener('click', function() {
                         showStudyDetail(term);
                         highlightListItem(index);
@@ -670,35 +807,39 @@
 
             function showStudyDetail(term) {
                 studyDetail.innerHTML = '';
-                const promptDiv = document.createElement('div');
-                promptDiv.className = 'prompt';
+
+                // Term (answer) visible by default
+                const termDiv = document.createElement('div');
+                termDiv.className = 'study-answer';
+                termDiv.textContent = (term.preText || '') + term.answerParts.join(' ') + (term.postText || '');
+                studyDetail.appendChild(termDiv);
+
+                // Definition (prompt) hidden initially
+                const defDiv = document.createElement('div');
+                defDiv.className = 'study-definition';
                 if (term.promptImage) {
                     const img = document.createElement('img');
                     img.src = term.promptImage;
                     img.alt = 'Prompt image';
-                    promptDiv.appendChild(img);
+                    defDiv.appendChild(img);
                 } else {
-                    promptDiv.textContent = term.promptText || 'Define the following:';
+                    defDiv.textContent = term.promptText || 'No definition available.';
                 }
-                studyDetail.appendChild(promptDiv);
+                studyDetail.appendChild(defDiv);
 
-                const answerDiv = document.createElement('div');
-                answerDiv.className = 'study-answer';
-                answerDiv.textContent = (term.preText || '') + term.answerParts.join(' ') + (term.postText || '');
-                studyDetail.appendChild(answerDiv);
-
-                const revealBtn = document.createElement('button');
-                revealBtn.textContent = 'Reveal Answer';
-                revealBtn.addEventListener('click', function() {
-                    if (answerDiv.style.display === 'none' || answerDiv.style.display === '') {
-                        answerDiv.style.display = 'block';
-                        revealBtn.textContent = 'Hide Answer';
+                // Toggle button for definition
+                const toggleBtn = document.createElement('button');
+                toggleBtn.textContent = 'Reveal Definition';
+                toggleBtn.addEventListener('click', function() {
+                    if (defDiv.style.display === 'none' || defDiv.style.display === '') {
+                        defDiv.style.display = 'block';
+                        toggleBtn.textContent = 'Hide Definition';
                     } else {
-                        answerDiv.style.display = 'none';
-                        revealBtn.textContent = 'Reveal Answer';
+                        defDiv.style.display = 'none';
+                        toggleBtn.textContent = 'Reveal Definition';
                     }
                 });
-                studyDetail.appendChild(revealBtn);
+                studyDetail.appendChild(toggleBtn);
             }
 
             function highlightListItem(index) {
@@ -716,7 +857,6 @@
                 studyActive = false;
                 studyPanel.style.display = 'none';
                 selectionPanel.style.display = 'block';
-                // Keep selection state
             });
 
             // Start the app
