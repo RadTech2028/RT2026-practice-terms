@@ -1,98 +1,68 @@
 [
-  {
-    "promptText": "ALARA",
-    "answerParts": ["as", "low", "as", "reasonably", "achievable"]
-  },
-  {
-    "promptText": "HIPAA",
-    "answerParts": ["Health", "Insurance", "Portability", "and", "Accountability", "Act"]
-  },
-  {
-    "promptText": "CPR",
-    "answerParts": ["cardiopulmonary", "resuscitation"]
-  },
-  {
-    "promptText": "PPE",
-    "answerParts": ["personal", "protective", "equipment"]
-  },
-  {
-    "promptText": "DNR",
-    "answerParts": ["do", "not", "resuscitate"]
-  },
-  {
-    "promptText": "NPO",
-    "answerParts": ["nothing", "by", "mouth"]
-  },
-  {
-    "promptText": "BID",
-    "answerParts": ["twice", "a", "day"]
-  },
-  {
-    "promptText": "TID",
-    "answerParts": ["three", "times", "a", "day"]
-  },
-  {
-    "promptText": "QID",
-    "answerParts": ["four", "times", "a", "day"]
-  },
-  {
-    "promptText": "PRN",
-    "answerParts": ["as", "needed"]
-  },
-  {
-    "promptText": "STAT",
-    "answerParts": ["immediately"]
-  },
-  {
-    "promptText": "QOD",
-    "answerParts": ["every", "other", "day"]
-  },
-  {
-    "promptText": "HS",
-    "answerParts": ["at", "bedtime"]
-  },
-  {
-    "promptText": "PC",
-    "answerParts": ["after", "meals"]
-  },
-  {
-    "promptText": "AC",
-    "answerParts": ["before", "meals"]
-  },
-  {
-    "promptText": "PO",
-    "answerParts": ["by", "mouth"]
-  },
-  {
-    "promptText": "IV",
-    "answerParts": ["intravenous"]
-  },
-  {
-    "promptText": "IM",
-    "answerParts": ["intramuscular"]
-  },
-  {
-    "promptText": "SC",
-    "answerParts": ["subcutaneous"]
-  },
-  {
-    "promptText": "CT",
-    "answerParts": ["computed", "tomography"]
-  },
-  {
-    "promptText": "MRI",
-    "answerParts": ["magnetic", "resonance", "imaging"]
-  },
-  {
-    "promptText": "US",
-    "answerParts": ["ultrasound"]
-  },
-  {
-    "promptText": "RT",
-    "answerParts": ["radiologic", "technologist"]
-  },
-  {
-    "promptText": "Radiographer",
-    "answerParts": ["radiographer"]
-  }
+  { "promptText": "ALARA", "answerParts": ["as", "low", "as", "reasonably", "achievable"] },
+  { "promptText": "HIPAA", "answerParts": ["Health", "Insurance", "Portability", "and", "Accountability", "Act"] },
+  { "promptText": "CPR", "answerParts": ["cardiopulmonary", "resuscitation"] },
+  { "promptText": "PPE", "answerParts": ["personal", "protective", "equipment"] },
+  { "promptText": "DNR", "answerParts": ["do", "not", "resuscitate"] },
+  { "promptText": "NPO", "answerParts": ["nothing", "by", "mouth"] },
+  { "promptText": "BID", "answerParts": ["twice", "a", "day"] },
+  { "promptText": "TID", "answerParts": ["three", "times", "a", "day"] },
+  { "promptText": "QID", "answerParts": ["four", "times", "a", "day"] },
+  { "promptText": "PRN", "answerParts": ["as", "needed"] },
+  { "promptText": "STAT", "answerParts": ["immediately"] },
+  { "promptText": "QOD", "answerParts": ["every", "other", "day"] },
+  { "promptText": "HS", "answerParts": ["at", "bedtime"] },
+  { "promptText": "PC", "answerParts": ["after", "meals"] },
+  { "promptText": "AC", "answerParts": ["before", "meals"] },
+  { "promptText": "PO", "answerParts": ["by", "mouth"] },
+  { "promptText": "IV", "answerParts": ["intravenous"] },
+  { "promptText": "IM", "answerParts": ["intramuscular"] },
+  { "promptText": "SC", "answerParts": ["subcutaneous"] },
+  { "promptText": "CT", "answerParts": ["computed", "tomography"] },
+  { "promptText": "MRI", "answerParts": ["magnetic", "resonance", "imaging"] },
+  { "promptText": "US", "answerParts": ["ultrasound"] },
+  { "promptText": "RT", "answerParts": ["radiologic", "technologist"] },
+  { "promptText": "BE", "answerParts": ["barium", "enema"] },
+  { "promptText": "BUN", "answerParts": ["blood", "urea", "nitrogen"] },
+  { "promptText": "CC", "answerParts": ["chief", "complaint"] },
+  { "promptText": "C/O", "answerParts": ["complains", "of"] },
+  { "promptText": "CAT", "answerParts": ["computed", "axial", "tomography"] },
+  { "promptText": "CTA", "answerParts": ["computed", "tomography", "angiography"] },
+  { "promptText": "CXR", "answerParts": ["chest", "x-ray"] },
+  { "promptText": "Dx", "answerParts": ["diagnosis"] },
+  { "promptText": "DJD", "answerParts": ["degenerative", "joint", "disease"] },
+  { "promptText": "DVT", "answerParts": ["deep", "vein", "thrombosis"] },
+  { "promptText": "FOOSH", "answerParts": ["fall", "on", "outstretched", "hand"] },
+  { "promptText": "Fx", "answerParts": ["fracture"] },
+  { "promptText": "FU / f/u", "answerParts": ["follow", "up"] },
+  { "promptText": "HO / H/O", "answerParts": ["history", "of"] },
+  { "promptText": "Hx", "answerParts": ["history"] },
+  { "promptText": "LLL", "answerParts": ["left", "lower", "lobe"] },
+  { "promptText": "LLQ", "answerParts": ["left", "lower", "quadrant"] },
+  { "promptText": "LUL", "answerParts": ["left", "upper", "lobe"] },
+  { "promptText": "LUQ", "answerParts": ["left", "upper", "quadrant"] },
+  { "promptText": "LROM", "answerParts": ["limited", "range", "of", "motion"] },
+  { "promptText": "PE", "answerParts": ["pulmonary", "embolism"] },
+  { "promptText": "PNE / PNA / PN", "answerParts": ["pneumonia"] },
+  { "promptText": "PNX / PTX / PX", "answerParts": ["pneumothorax"] },
+  { "promptText": "R/O", "answerParts": ["rule", "out"] },
+  { "promptText": "SOB", "answerParts": ["short", "of", "breath"] },
+  { "promptText": "S/P", "answerParts": ["status", "post"] },
+  { "promptText": "S/F", "answerParts": ["slip", "fall"] },
+  { "promptText": "TB", "answerParts": ["tuberculosis"] },
+  { "promptText": "X_d", "answerParts": ["times", "days"] },
+  { "promptText": "AAA", "answerParts": ["abdominal", "aortic", "aneurysm"] },
+  { "promptText": "TAA", "answerParts": ["thoracic", "aortic", "aneurysm"] },
+  { "promptText": "BPM", "answerParts": ["beats", "per", "minute"] },
+  { "promptText": "CA", "answerParts": ["cancer"] },
+  { "promptText": "CAD", "answerParts": ["coronary", "artery", "disease"] },
+  { "promptText": "CHF", "answerParts": ["congestive", "heart", "failure"] },
+  { "promptText": "COPD", "answerParts": ["chronic", "obstructive", "pulmonary", "disease"] },
+  { "promptText": "CVA", "answerParts": ["cerebrovascular", "accident"] },
+  { "promptText": "DOE", "answerParts": ["dyspnea", "on", "exertion"] },
+  { "promptText": "HA", "answerParts": ["headache"] },
+  { "promptText": "HTN", "answerParts": ["hypertension"] },
+  { "promptText": "NKA", "answerParts": ["no", "known", "allergies"] },
+  { "promptText": "PVD", "answerParts": ["peripheral", "vascular", "disease"] },
+  { "promptText": "TIA", "answerParts": ["transient", "ischemic", "attack"] }
 ]
