@@ -159,6 +159,15 @@
         .answer-comparison p {
             margin-bottom: 0.5rem;
         }
+        .error-message {
+            color: var(--red);
+            font-weight: 600;
+            text-align: center;
+            padding: 1rem;
+            background: #fff5f5;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -211,70 +220,6 @@
             // Path to books.json (relative to raw base)
             const BOOKS_JSON_PATH = "data/books.json";
 
-            // Fallback sample data if fetch fails (for offline testing)
-            const FALLBACK_BOOKS = [
-                {
-                    name: "Merrils Atlas",
-                    chapters: [
-                        {
-                            name: "Upper Extremity (Sample)",
-                            file: "data/MerrilsAtlas/UpperExtremity.json"
-                        }
-                    ]
-                },
-                {
-                    name: "Bushong",
-                    chapters: [
-                        {
-                            name: "Radiographic Positioning (Sample)",
-                            file: "data/Bushong/RadiographicPositioning.json"
-                        }
-                    ]
-                }
-            ];
-
-            const FALLBACK_CHAPTERS = {
-                "data/MerrilsAtlas/UpperExtremity.json": [
-                    {
-                        promptText: "MCP",
-                        answerParts: ["metacarpophalangeal"],
-                        postText: " joint"
-                    },
-                    {
-                        promptText: "PIP",
-                        answerParts: ["proximal", "interphalangeal"],
-                        postText: " joint"
-                    },
-                    {
-                        promptText: "DIP",
-                        answerParts: ["distal", "interphalangeal"],
-                        postText: " joint"
-                    },
-                    {
-                        promptText: "The bones of the wrist are called the:",
-                        answerParts: ["carpals"]
-                    },
-                    {
-                        promptText: "The bones of the palm are called the:",
-                        answerParts: ["metacarpals"]
-                    },
-                    {
-                        promptText: "The bones of the fingers are called the:",
-                        answerParts: ["phalanges"]
-                    }
-                ],
-                "data/Bushong/RadiographicPositioning.json": [
-                    {
-                        promptText: "What projection is used to demonstrate the carpal canal?",
-                        answerParts: ["carpal", "canal"]
-                    },
-                    {
-                        promptText: "PA",
-                        answerParts: ["posteroanterior"]
-                    }
-                ]
-            };
-
             // ---------- State ----------
             let books = [];
             let currentBook = null;
@@ -308,11 +253,12 @@
                     const response = await fetch(GITHUB_RAW_BASE + BOOKS_JSON_PATH);
                     if (!response.ok) throw new Error('Network response was not ok');
                     books = await response.json();
+                    populateBookSelect();
                 } catch (error) {
-                    console.warn('Failed to fetch books.json from GitHub, using fallback data.', error);
-                    books = FALLBACK_BOOKS;
+                    console.error('Failed to load books.json:', error);
+                    loadingStatus.innerHTML = '<span class="error-message">Error loading book data. Please check your internet connection and try again.</span>';
+                    bookSelect.disabled = true;
                 }
-                populateBookSelect();
             }
 
             function populateBookSelect() {
@@ -324,6 +270,7 @@
                     bookSelect.appendChild(option);
                 });
                 loadingStatus.style.display = 'none';
+                bookSelect.disabled = false;
             }
 
             // ---------- Book / Chapter Selection ----------
@@ -376,13 +323,9 @@
                         const terms = await resp.json();
                         allTerms = allTerms.concat(terms);
                     } catch (error) {
-                        // Fallback to embedded data if available
-                        console.warn('Fetch failed for ' + filePath, error);
-                        if (FALLBACK_CHAPTERS[filePath]) {
-                            allTerms = allTerms.concat(FALLBACK_CHAPTERS[filePath]);
-                        } else {
-                            alert('Error loading chapter: ' + filePath);
-                        }
+                        console.error('Error loading chapter:', filePath, error);
+                        alert('Error loading chapter: ' + filePath + '\nPlease check the file path in books.json and ensure the file exists.');
+                        return; // stop loading further chapters
                     }
                 }
                 if (allTerms.length === 0) {
@@ -462,8 +405,6 @@
                     answerArea.appendChild(post);
                 }
 
-                // Store current inputs for later use
-                answerArea.dataset.inputs = JSON.stringify(inputs.map(inp => inp.dataset.index));
                 // Focus first input
                 if (inputs.length > 0) inputs[0].focus();
 
