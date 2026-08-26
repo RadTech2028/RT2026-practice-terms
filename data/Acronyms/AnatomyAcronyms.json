@@ -1,0 +1,66 @@
+[
+  {
+    "promptText": "CMC",
+    "answerParts": ["carpometacarpal"]
+  },
+  {
+    "promptText": "DIP",
+    "answerParts": ["distal", "interphalangeal"]
+  },
+  {
+    "promptText": "PIP",
+    "answerParts": ["proximal", "interphalangeal"]
+  },
+  {
+    "promptText": "MCP",
+    "answerParts": ["metacarpophalangeal"]
+  },
+  {
+    "promptText": "IP",
+    "answerParts": ["interphalangeal"]
+  },
+  {
+    "promptText": "MC",
+    "answerParts": ["metacarpal"]
+  },
+  {
+    "promptText": "AC joint",
+    "answerParts": ["acromioclavicular", "joint"]
+  },
+  {
+    "promptText": "SC joint",
+    "answerParts": ["sternoclavicular", "joint"]
+  },
+  {
+    "promptText": "TMJ",
+    "answerParts": ["temporomandibular", "joint"]
+  },
+  {
+    "promptText": "SI joint",
+    "answerParts": ["sacroiliac", "joint"]
+  },
+  {
+    "promptText": "C-spine",
+    "answerParts": ["cervical", "spine"]
+  },
+  {
+    "promptText": "T-spine",
+    "answerParts": ["thoracic", "spine"]
+  },
+  {
+    "promptText": "L-spine",
+    "answerParts": ["lumbar", "spine"]
+  },
+  {
+    "promptText": "GI",
+    "answerParts": ["gastrointestinal"]
+  },
+  {
+    "promptText": "GU",
+    "answerParts": ["genitourinary"]
+  },
+  {
+    "promptText": "KUB",
+    "answerParts": ["kidneys", "ureters", "bladder"]
+  }
+]
